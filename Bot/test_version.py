@@ -1,0 +1,212 @@
+import logging
+from datetime import datetime, timedelta
+
+from binance.client import Client
+from threading import Thread
+import base
+from time import sleep
+import bin_func
+
+client = Client("W4oUfz3kd65ORroNiswhGM0ZPq6inh07jPTIdOr57PVxocG3myRnDd9FjevU6vE2", "0B5baGfncJzYTfa9zejj1k1fE9y4SVrHAySrjFNC53mXhq2MHNiVt1pTnsIEJNbh")
+#db = base.Base("localhost")
+db = base.Base("mongodb://Roooasr:sedsaigUG12IHKJhihsifhaosf@mongodb:27017/")
+logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+db.UpdateSymbolInfo(client=client)
+
+def toFixed(numObj, digits=0):
+    return f"{numObj:.{digits}f}"
+
+
+def cancleBye(bot,order):
+    if order["status"] == 'NEW' and order["side"] == 'BUY':
+        creation_time = datetime.fromtimestamp(order["time"] / 1000)
+        time_diff = datetime.now() - creation_time
+        if time_diff > timedelta(hours=2):
+            logging.info(f"order time canseled: {time_diff > timedelta(hours=5)}")
+            current_price = float(client.get_avg_price(symbol=bot['valute_par'])["price"])
+
+            if (float(order['price']) + 2 * bot['step']) < current_price:
+                client.cancel_order(symbol=bot['valute_par'], orderId=str(order["orderId"]))
+                logging.info(
+                    f"Order {order['orderId']} canceled for bot {bot['name']}c drop below acceptable range")
+                db.dropLastPriceBye(bot["_id"], order)
+                db.reloadSumInvest(bot["_id"], order)
+                bot = db.getBot(bot["_id"])
+
+                if current_price not in bot['last_price'] and (
+                        bot["total_sum_invest"] - float(order['cummulativeQuoteQty'])) >= 0:
+                    # Менять ордербайид в ордере бота
+                    try:
+                        order_new = bin_func.Bye(
+                            client=client,
+                            quantity=order['cummulativeQuoteQty'],
+                            symbol=bot['valute_par'],
+                            price=current_price
+                        )
+                        db.reloadOrderBye(bot["_id"], order, order_new)
+                        logging.info(f"New REINVEST for bot {bot['name']} with details: {order_new}")
+                        db.setLastPrice(bot["_id"], current_price)
+                    except Exception as e:
+                        print(f"Error CANCELED BYE: {e.args} {bot['name']} {order}")
+                        logging.info(f"Error CANCELED BYE: {e.args} {bot['name']}")
+
+
+def cancleSell(bot, order):
+    if order["status"] == 'NEW' and order["side"] == 'SELL':
+        creation_time = datetime.fromtimestamp(order["time"] / 1000)
+        time_diff = datetime.now() - creation_time
+        if time_diff > timedelta(hours=2):
+            logging.info(f"order time canseled: {time_diff > timedelta(hours=2)}")
+            currentprice = client.get_avg_price(symbol=bot['valute_par'])["price"]
+            current_price = float(currentprice)
+
+            if (float(order['price']) + 2 * bot['step']) > current_price:
+                client.cancel_order(symbol=bot['valute_par'], orderId=str(order["orderId"]))
+                logging.info(
+                    f"Order {order['orderId']} SELL canceled for bot {bot['name']}c drop below acceptable range")
+
+                bot = db.getBot(bot["_id"])
+
+                try:
+                    # Может быть стоит переписать ордер внутри бота. Пусть показывает минус
+                    order_new = bin_func.Sell(
+                        client=client,
+                        quantity=order['origQty'],
+                        symbol=bot['valute_par'],
+                        price=currentprice
+                    )
+                    db.reloadSell(bot["_id"], order, order_new)
+                    logging.info(f"New CANCELED for bot {bot['name']} with details: {order_new}")
+                except Exception as e:
+                    print(f"Error CANCELED SELL: {e.args} {bot['name']}")
+                    logging.info(f"Error CANCELED SELL: {e.args} {bot['name']}")
+
+
+def CheckOrder(bot_id):
+    bot = db.getBot(bot_id)
+    #logging.info(f"check the bot: {bot['name']} ")
+    for order_bye_bot in bot['orders']:
+
+        order = client.get_order(symbol=bot['valute_par'], orderId=str(order_bye_bot))
+
+        if order["status"] == 'CANCELED' and order["side"] == 'SELL':
+            db.dropLastPriceSell(bot['_id'],order)
+            continue
+
+        if order["status"] == 'FILLED' and order["side"] == 'BUY':
+            #Продажа в случае покупки
+            try:
+                order_sell = bin_func.Sell(
+                    quantity=order['origQty'],
+                    symbol=bot['valute_par'],
+                    price='{:.8f}'.format(float(order["price"])+bot['step']),
+                    client=client
+                )
+                db.addOrderSell(bot["_id"], order, order_sell)
+                logging.info(f"New sell order added for bot {bot['name']} with details: {order_sell}")
+                continue
+            except Exception as e:
+                print(f"Error post BUY: {e.args} {bot['name']}")
+                logging.info(f"Error post BUY: {e.args} {bot['name']}")
+
+
+        bot = db.getBot(bot_id)
+        if order["status"] == 'FILLED' and order["side"] == 'SELL':
+            db.Sell(bot["_id"], order)
+            db.dropLastPrice(bot["_id"], order)
+            bot = db.getBot(bot_id)
+            logging.info(f"Order {order} sold for bot {bot['name']}")
+            price = '{:.8f}'.format(float(order["price"]) - bot['step'])
+            if price not in bot['last_price']:
+                # Покупка в случае продажи
+                try:
+                    print(f"order on reinvest: {order}")
+                    order = bin_func.Bye(
+                        client=client,
+                        quantity=order['cummulativeQuoteQty'],
+                        symbol=bot['valute_par'],
+                        price= price
+                    )
+
+                    if order != 0:
+                        db.addOrderBye(bot["_id"], order)
+                        logging.info(f"New REINVEST for bot {bot['name']} with details: {order}")
+                        db.setLastPrice(bot["_id"], price)
+                    else:
+                        continue
+                    continue
+                except Exception as e:
+                    print(f"Error Bye post SELL: {e.args} {bot['name']}")
+                    logging.info(f"Error Bye post SELL: {e.args} {bot['name']}")
+
+
+        #Системная отмена ордера на покупку
+        bot = db.getBot(bot_id)
+        cancleBye(bot,order)
+
+
+
+        #Отмена ордера на продажу
+        bot = db.getBot(bot_id)
+        cancleSell(bot,order)
+
+
+def worker():
+    print("start worker")
+    while True:
+        try:
+            bots = db.getAllBots()
+
+            for bot in bots:
+                if bot["on"] == True:
+                    print(bot)
+                    price = client.get_avg_price(symbol=bot['valute_par'])["price"]
+                    if price not in bot['last_price'] and (bot["total_sum_invest"]-bot["sum_invest"]) >= 0:
+                        try:
+                            order_bye = bin_func.Bye(
+                                client=client,
+                                quantity=bot["sum_invest"],
+                                symbol=bot['valute_par'],
+                                price=price
+                            )
+                            #print(order)
+                            if order_bye != 0:
+                                db.addOrderBye(bot["_id"], order_bye)
+                                logging.info(f"New buy order added for bot {bot['name']} with details: {order_bye}")
+                                db.setLastPrice(bot["_id"], price)
+                            else:
+                                pass
+                                #print(f"None balance on bank for bot {bot['name']}: {price}")
+                                #logging.info(f"None balance on bank for bot {bot['name']}: {price}")
+                        except Exception as e:
+                            print(e.args)
+                    #logging.info(f"Current price for bot {bot['name']}: {price}")
+                    CheckOrder(bot["_id"])
+                    sleep(10)
+        except Exception as e:
+            print(f"worker err: {e}")
+            logging.exception(f"Error occurred: {e}")
+            sleep(10)
+
+
+
+
+
+if __name__ == "__main__":
+    #db.regBot(valute_par="TRXBTC",total_sum_invest=0.001,name="TEST_TRXBTC",sum_invest=0.0005,step=1)
+    #db.regBot(valute_par="IOSTBTC",total_sum_invest=0.001,name="TEST_IOSTBTC",sum_invest=0.0005,step=1)
+    #db.regBot(valute_par="JASMYBTC",total_sum_invest=0.001,name="TEST_JASMYBTC",sum_invest=0.0005,step=1)
+    #db.regBot(valute_par="RVNBTC",total_sum_invest=0.001,name="TEST_RVNBTC",sum_invest=0.0005,step=1)
+    #db.regBot(valute_par="DOGEBTC",total_sum_invest=0.001,name="TEST_DOGEBTC",sum_invest=0.0005,step=1)
+    #db.regBot(valute_par="VETBTC",total_sum_invest=0.001,name="TEST_VETBTC",sum_invest=0.0005,step=1)
+    #db.regBot(valute_par="ADABTC",total_sum_invest=0.0006,name="ADABTC_TEST",sum_invest=0.0002,step=17)
+    #db.regBot(valute_par="ADABTC",total_sum_invest=0.0006,name="ADABTC_fast_TEST",sum_invest=0.0002,step=7)
+    #db.regBot(valute_par="DOGEBTC",total_sum_invest=0.0010,name="DOGEBTC_fast1_TEST",sum_invest=0.0002,step=2)
+    #db.regBot(valute_par="CELRBTC",total_sum_invest=0.0010,name="CELRBTC_fast1_TEST",sum_invest=0.0002,step=1)
+    #db.regBot(valute_par="LINABTC",total_sum_invest=0.0010,name="LINABTC_fast1_TEST",sum_invest=0.0002,step=1)
+    #db.regBot(valute_par="DOGEBTC",total_sum_invest=0.0010,name="DOGEBTC_fast2_TEST",sum_invest=0.0002,step=2)
+    #db.regBot(valute_par="DOGEBTC",total_sum_invest=0.0010,name="DOGEBTC_fast3_TEST",sum_invest=0.0002,step=3)
+    #db.regBot(valute_par="LTOBTC",total_sum_invest=0.0006,name="LTOBTC_fast1_TEST",sum_invest=0.00021,step=3)
+    #db.regBot(valute_par="QLCBTC",total_sum_invest=0.0006,name="QLCBTC_fast2_TEST",sum_invest=0.0002,step=1)
+    tr = Thread(target=worker, args=(), name="Main_Worker")
+    tr.start()
