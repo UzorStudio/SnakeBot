@@ -8,8 +8,8 @@ from telebot.types import InlineKeyboardButton
 import base
 usrs = []
 bot = telebot.TeleBot('5072194047:AAFeQRpZAloSxWP6iX2sOLKZ5suXZ_qRL2I')
-#db = base.Base("mongodb://Roooasr:sedsaigUG12IHKJhihsifhaosf@mongodb:27017/")
-db = base.Base("localhost")
+db = base.Base("mongodb://Roooasr:sedsaigUG12IHKJhihsifhaosf@mongodb:27017/")
+#db = base.Base("localhost")
 
 
 @bot.message_handler(commands=['start'])
@@ -27,7 +27,7 @@ def start(message):
 @bot.message_handler(content_types=['text'])
 def text(message):
     if message.text == "Создать бота":
-        bot.send_message(message.chat.id, "опишите бота по типу:\nvalue_par@0.0006@test_name@0.0002@1\nВалютная_пара@общая_сумма_инвистиций@имя@сумма_инвестиций@шаг_указывать_в_сатоши")
+        bot.send_message(message.chat.id, "опишите бота по типу:\nvalue_par@0.0006@test_name@0.0002@1@0.00000021@0.00000022\nВалютная_пара@общая_сумма_инвистиций@имя@сумма_инвестиций@шаг_указывать_в_сатоши@мин_цена@макс_цена")
         bot.register_next_step_handler(message, create_bot)
     elif message.text == "Проверить работу":
         for bots in db.getAllBots():
@@ -197,7 +197,7 @@ def callback_worker(call):
 
 def create_bot(message):
     sp = message.text.split("@")
-    db.regBot(valute_par=sp[0], total_sum_invest=float(sp[1]), name=sp[2], sum_invest=float(sp[3]), step=int(sp[4]))
+    db.regBot(valute_par=sp[0], total_sum_invest=float(sp[1]), name=sp[2], sum_invest=float(sp[3]), step=int(sp[4]),min_price=float(sp[5]),max_price=float(sp[6]))
 
 
 def SicleSend():
