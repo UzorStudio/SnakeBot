@@ -13,8 +13,7 @@ class Base:
         self.classterMongo = classterMongo
         self.classter = pymongo.MongoClient(self.classterMongo)
 
-
-    def regBot(self, valute_par, total_sum_invest,name, sum_invest, step):
+    def regBot(self, valute_par, total_sum_invest, name, sum_invest, step, min_price, max_price):
         db = self.classter["SnakeBot"]
         Bots = db["Bots"]
 
@@ -23,20 +22,23 @@ class Base:
             "name": name,
             "sum_invest": float(sum_invest),
             "total_sum_invest": float(total_sum_invest),
-            'orders':[],
-            "step":step/100000000,
-            "full_orders":[], # [{"bye":0.0..30,"sell":0.0..31},{"bye":0.0..30,"sell":False}]
+            'orders': [],
+            "step": step / 100000000,
+            "full_orders": [],  # [{"bye":0.0..30,"sell":0.0..31},{"bye":0.0..30,"sell":False}]
             "count_hev": 0,  # записывать количество
-            'spent':0,
-            'spent_true':0,
+            'spent': 0,
+            'spent_true': 0,
+            "bye_order": False,
             'on': True,
-            "cikle_profit":0,
-            "total_profit":0,
-            "cikle_count":0,
-            "base_sum_invest":float(sum_invest),
-            "base_total_sum_invest":float(total_sum_invest),
+            "reinvest": True,
+            "total_profit": 0,
+            "cikle_count": 0,
+            "min_price": min_price,
+            "max_price": max_price,
+            "base_sum_invest": float(sum_invest),
+            "base_total_sum_invest": float(total_sum_invest),
             "earned": 0,
-            "last_price":[]
+            "last_price": []
         }
 
         return Bots.insert_one(post).inserted_id
@@ -75,6 +77,13 @@ class Base:
         Bots = db["Bots"]
 
         Bots.update_one({"_id": ObjectId(bot_id)},{"$set":{"on":onoff}})
+
+
+    def offoronReivest(self,bot_id,reinv):
+        db = self.classter["SnakeBot"]
+        Bots = db["Bots"]
+
+        Bots.update_one({"_id": ObjectId(bot_id)},{"$set":{"reinvest":reinv}})
 
 
     def getSend(self):

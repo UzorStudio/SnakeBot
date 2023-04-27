@@ -1,4 +1,4 @@
-
+import time
 
 from binance.client import Client
 
@@ -21,23 +21,53 @@ def test():
         if float(o['quoteVolume']) > 0 and float(o['bidPrice']) > 0:
             cikle = float(o['quoteVolume']) / (
                         (float(o['bidQty']) * float(o['bidPrice'])) + (float(o['askQty']) * float(o['askPrice'])))
+            perc = (1-(float(o['bidPrice'])/float(o['askPrice'])))*100
 
-            true_order.append({"symbol": o['symbol'],
-                               "askPrice": o['askPrice'],
-                               "askQty": float(o['askQty']) * float(o['askPrice']),
-                               "bidPrice": o['bidPrice'],
-                               "bidQty": float(o['bidQty']) * float(o['bidPrice']),
-                               "quoteVolume": o['quoteVolume'],
-                               "cikle": cikle})
+            if cikle >= 1 and perc >= 1:
+                true_order.append({"symbol": o['symbol'],
+                                   "askPrice": o['askPrice'],
+                                   "askQty": float(o['askQty']) * float(o['askPrice']),
+                                   "bidPrice": o['bidPrice'],
+                                   "bidQty": float(o['bidQty']) * float(o['bidPrice']),
+                                   "quoteVolume": o['quoteVolume'],
+                                   "percent":perc,
+                                   "cikle": cikle})
+    true_order.sort(key=lambda m: m['cikle'], reverse=False)
+    true_order_cikle = true_order
+    true_order.sort(key=lambda m: float(m['bidPrice']), reverse=False)
+    time.sleep(5)
+    true_order_bidPrice = true_order
 
-    true_order.sort(key=lambda m: (float(m['bidPrice']), m['cikle']), reverse=True)
-    true_order = true_order
-    for t in true_order:
-        if t["cikle"] >= 1:
-            print(t)
+
+    return {"cikle":true_order_cikle,"price":true_order_bidPrice}
+
+def getValute(type):
+    if type == "cikle":
+        cikle = test()['cikle']
+        cikle.sort(key=lambda m: m['cikle'], reverse=True)
+        return cikle
+    if type == "price":
+        price = test()['price']
+        price.sort(key=lambda m: m['bidPrice'], reverse=True)
+        return price
+    if type == "top":
+        top = []
+        price = test()['price']
+        price.sort(key=lambda m: m['bidPrice'], reverse=True)
+        cikle = test()['cikle']
+        cikle.sort(key=lambda m: m['cikle'], reverse=True)
+
+        for c in cikle:
+            if c['cikle'] >= 2 and c['percent'] >= 1:
+                top.append(c)
+        top.sort(key=lambda m: m['cikle'], reverse=False)
+        return top
 
 
-test()
+
+v = getValute("cikle")
+for i in v:
+    print(i)
 #td = client.get_all_orders(symbol='DOGEBTC')
 #
 #print(td[0])

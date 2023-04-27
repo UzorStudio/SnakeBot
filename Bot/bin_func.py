@@ -1,7 +1,11 @@
+import logging
+
 from binance.exceptions import BinanceAPIException
 import base
+logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-db = base.Base("mongodb://Roooasr:sedsaigUG12IHKJhihsifhaosf@mongodb:27017/")
+#db = base.Base("mongodb://Roooasr:sedsaigUG12IHKJhihsifhaosf@mongodb:27017/")
+db = base.Base("localhost")
 
 def PRICE_FILTER(symbol):
     i = db.GetSymbolInfo(symbol=symbol)
@@ -21,7 +25,7 @@ def MIN_NOTIONAL(symbol):
     i = db.GetSymbolInfo(symbol=symbol)
     for s in i["filters"]:
         # print(f"help: {s}")
-        if s['filterType'] == 'MIN_NOTIONAL':
+        if s['filterType'] == 'NOTIONAL':
             return float(s['minNotional'])
 
 def toFixed(numObj, digits=0):
@@ -40,13 +44,11 @@ def Sell(client, symbol, quantity, price):
     )
     return order
 
-
-
 def Bye(client,symbol,quantity,price):
     quantity = round(float(quantity)/float(price),LOT_SIZE(symbol))
     price = toFixed(float(price),PRICE_FILTER(symbol))
     mnn = MIN_NOTIONAL(symbol)
-
+    print(f"BYE func: {mnn} {quantity}")
     #print(f"qua: {quantity} {symbol}")
     #print(f"price: {price} {symbol}")
     if quantity >= 1:
@@ -63,7 +65,5 @@ def Bye(client,symbol,quantity,price):
         )
         return order
     except BinanceAPIException as e:
-        if e.code == -2010:
-            return 0
-        else:
-            return e.args
+        logging.error(f"by bin_funk err: {symbol} {quantity} {e.args}")
+        return 0

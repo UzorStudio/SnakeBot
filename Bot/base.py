@@ -14,7 +14,7 @@ class Base:
         self.classter = pymongo.MongoClient(self.classterMongo)
 
 
-    def regBot(self, valute_par, total_sum_invest,name, sum_invest, step):
+    def regBot(self, valute_par, total_sum_invest,name, sum_invest, step,min_price,max_price):
         db = self.classter["SnakeBot"]
         Bots = db["Bots"]
 
@@ -29,10 +29,13 @@ class Base:
             "count_hev": 0,  # записывать количество
             'spent':0,
             'spent_true':0,
+            "bye_order":False,
             'on': True,
-            "cikle_profit":0,
+            "reinvest":True,
             "total_profit":0,
             "cikle_count":0,
+            "min_price":min_price,
+            "max_price":max_price,
             "base_sum_invest":float(sum_invest),
             "base_total_sum_invest":float(total_sum_invest),
             "earned": 0,
@@ -62,6 +65,7 @@ class Base:
         spent = float(order["origQty"])*float(order["price"])
         Bots.update_one({"_id": ObjectId(bot_id)}, {"$inc": {"total_sum_invest": -spent}})
         Bots.update_one({"_id": ObjectId(bot_id)}, {"$push":{'orders':order['orderId']}})
+        Bots.update_one({"_id": ObjectId(bot_id)}, {"$set":{'bye_order':True}})
         Orders.insert_one({"bot_id":ObjectId(bot_id),"bye_id":order['orderId'],"bye":order,"sell":False,"sell_id":False,"profit":0,"erned":0,"is_bye":False,"finish":False})
 
 
@@ -76,7 +80,8 @@ class Base:
         orders.append(order_sell['orderId'])
 
         Bots.update_one({"_id": ObjectId(bot_id)}, {"$set": {'orders': orders}})
-        Orders.update_one({"bot_id": ObjectId(bot_id),"bye_id":order_bye["orderId"]}, {"$set": {"sell": order_sell,"sell_id":order_sell["orderId"],"is_bye":True}})
+        Bots.update_one({"_id": ObjectId(bot_id)}, {"$set":{'bye_order':False}})
+        Orders.update_one({"bot_id": ObjectId(bot_id),"bye_id":order_bye["orderId"]}, {"$set": {"sell": order_sell,"bye":order_bye,"sell_id":order_sell["orderId"],"is_bye":True}})
 
     def reloadOrderSell(self, bot_id, order_sell_old, order_sell_new):
         db = self.classter["SnakeBot"]
@@ -141,11 +146,23 @@ class Base:
 
         erned = float(order_sell["cummulativeQuoteQty"])-float(order['bye']["cummulativeQuoteQty"])
         profit = 1-(float(order['bye']["cummulativeQuoteQty"])/float(order_sell["cummulativeQuoteQty"]))
+
+        try:
+            full_orders = Bots.find_one({"_id": ObjectId(bot_id)})['full_orders']
+            if order['bye']["price"] in full_orders:
+                Bots.update_one({"_id": ObjectId(bot_id)}, {"$set": {"full_orders": {order['bye']["price"]:order['bye']["cummulativeQuoteQty"]}}})
+            else:
+                full_orders[order['bye']["price"]] = order['bye']["cummulativeQuoteQty"]
+                Bots.update_one({"_id": ObjectId(bot_id)}, {"$set": {"full_orders":full_orders}})
+        except:
+            Bots.update_one({"_id": ObjectId(bot_id)}, {"$set": {"full_orders":{order['bye']["price"]:order['bye']["cummulativeQuoteQty"]}}})
+
+
         print(f"erned: {erned}")
         print(f"profit: {profit}")
-        Bots.update_one({"_id": ObjectId(bot_id)}, {"$inc": {'total_sum_invest': +float(order_sell["cummulativeQuoteQty"]),"earned":+erned,"total_profit":+profit,"cikle_count":+1}})
-        Orders.update_one({"bot_id": ObjectId(bot_id), "sell_id":order_sell["orderId"]},{"$set": {"profit": profit,"erned":erned, "finish": True}})
-        Send.insert_one({"bot":bt['name'],"valute_par":bt['valute_par'],"profit":profit,"erned":erned,"bye":order['bye']["cummulativeQuoteQty"],"sell":order_sell["cummulativeQuoteQty"],"send":False})
+        Bots.update_one({"_id": ObjectId(bot_id)}, {"$inc": {'total_sum_invest': +float(order_sell["cummulativeQuoteQty"]),"earned":+erned,"total_profit":+profit*100,"cikle_count":+1}})
+        Orders.update_one({"bot_id": ObjectId(bot_id), "sell_id":order_sell["orderId"]},{"$set": {"profit": profit*100,"erned":erned, "finish": True}})
+        Send.insert_one({"bot":bt['name'],"valute_par":bt['valute_par'],"profit":profit*100,"erned":erned,"bye":order['bye']["cummulativeQuoteQty"],"price_bye":order['bye']["price"],"sell":order_sell["cummulativeQuoteQty"],"price_sell":order_sell["price"],"send":False})
 
 
 
