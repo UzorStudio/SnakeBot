@@ -32,7 +32,7 @@ def toFixed(numObj, digits=0):
     return f"{numObj:.{digits}f}"
 
 def Sell(client, symbol, quantity, price):
-    quantity = float(quantity) - float(quantity)*0.001
+    quantity = float(quantity)
     #quantity = round(float(quantity), LOT_SIZE(symbol)-1)
     n1, n2 = str(quantity).split('.')
     quantity = float(f'{n1}.{n2[:LOT_SIZE(symbol)-1]}')
