@@ -13,9 +13,9 @@ def test():
     orders = client.get_ticker()
     orders.sort(key=lambda m: float(m['bidPrice']))
     del orders[0:780]
-    orders_sort_price = orders[:100]
+    orders_sort_price = orders[:300]
     orders_sort_price.sort(key=lambda m: float(m['quoteVolume']))
-    orders_sort_volume = orders_sort_price[:100]
+    orders_sort_volume = orders_sort_price[:200]
     # print(orders_sort_price)
     for o in orders_sort_volume:
         if float(o['quoteVolume']) > 0 and float(o['bidPrice']) > 0:
@@ -23,7 +23,7 @@ def test():
                         (float(o['bidQty']) * float(o['bidPrice'])) + (float(o['askQty']) * float(o['askPrice'])))
             perc = (1-(float(o['bidPrice'])/float(o['askPrice'])))*100
 
-            if cikle >= 1 and perc >= 1:
+            if cikle >= 1 and perc >= 0.7:
                 true_order.append({"symbol": o['symbol'],
                                    "askPrice": o['askPrice'],
                                    "askQty": float(o['askQty']) * float(o['askPrice']),

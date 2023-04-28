@@ -48,8 +48,9 @@ def text(message):
 
             bot.send_message(message.chat.id,
                              f"{bots['valute_par']}\n"
-                             f"{bots['name']}\n"
+                             f"{bots['name']} {bots['min_price']}-{bots['max_price']}\n"
                              f"На балансе осталось: {bots['total_sum_invest']}\n"
+                             f"Заработано ботом: {bots['earned']}\n"
                              f"Сумма инвестиций: {bots['sum_invest']}\n"
                              f"Колтичество ордеров: {len(bots['orders'])}\n"
                              f"Всего циклов: {bots['cikle_count']}\n",reply_markup=kbrd
