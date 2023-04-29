@@ -92,6 +92,12 @@ def CheckOrder(bot_id):
             db.dropLastPriceSell(bot['_id'],order)
             continue
 
+        if order["status"] == 'CANCELED' and order["side"] == 'BUY':
+            print(order)
+            db.dropLastPriceBye(bot["_id"], order)
+            db.reloadSumInvest(bot["_id"], order)
+            continue
+
         if order["status"] == 'FILLED' and order["side"] == 'BUY':
             #Продажа в случае покупки
             try:
