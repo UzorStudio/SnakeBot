@@ -179,15 +179,15 @@ def worker():
 
             for bot in bots:
                 if bot["on"] == True:
-                    price = client.get_avg_price(symbol=bot['valute_par'])["price"]
                     CheckOrder(bot["_id"])
+                    price = client.get_avg_price(symbol=bot['valute_par'])["price"]
                     if price not in bot['last_price'] and (float(price)-bot['step']) <= bot['max_price'] and float(price) >= bot['min_price']:
                         try:
                             if bot['reinvest'] == True:
                                 if price in str(bot['full_orders']):
                                     order_bye = bin_func.Bye(
                                         client=client,
-                                        quantity=bot['full_orders'][price],
+                                        quantity=bot['full_orders'][float(price)],
                                         symbol=bot['valute_par'],
                                         price=price
                                     )
