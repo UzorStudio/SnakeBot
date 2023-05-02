@@ -3,8 +3,6 @@ import time
 
 from binance.client import Client
 
-from Bot import base
-
 client = Client("W4oUfz3kd65ORroNiswhGM0ZPq6inh07jPTIdOr57PVxocG3myRnDd9FjevU6vE2",
                 "0B5baGfncJzYTfa9zejj1k1fE9y4SVrHAySrjFNC53mXhq2MHNiVt1pTnsIEJNbh")
 
@@ -59,5 +57,3 @@ def getValute():
 
 
 #Сортировка по объему размещенных ордеров наверх 100%
-
-v = getValute()['BTC']
