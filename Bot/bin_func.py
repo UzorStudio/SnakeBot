@@ -4,8 +4,8 @@ from binance.exceptions import BinanceAPIException
 import base
 logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-#db = base.Base("mongodb://Roooasr:sedsaigUG12IHKJhihsifhaosf@mongodb:27017/")
-db = base.Base("localhost")
+db = base.Base("mongodb://Roooasr:sedsaigUG12IHKJhihsifhaosf@mongodb:27017/")
+#db = base.Base("localhost")
 
 def PRICE_FILTER(symbol):
     i = db.GetSymbolInfo(symbol=symbol)

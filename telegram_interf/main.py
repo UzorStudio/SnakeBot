@@ -8,8 +8,8 @@ from telebot.types import InlineKeyboardButton
 import base
 usrs = []
 bot = telebot.TeleBot('5072194047:AAFeQRpZAloSxWP6iX2sOLKZ5suXZ_qRL2I')
-#db = base.Base("mongodb://Roooasr:sedsaigUG12IHKJhihsifhaosf@mongodb:27017/")
-db = base.Base("localhost")
+db = base.Base("mongodb://Roooasr:sedsaigUG12IHKJhihsifhaosf@mongodb:27017/")
+#db = base.Base("localhost")
 
 
 def toFixed(numObj, digits=0):
