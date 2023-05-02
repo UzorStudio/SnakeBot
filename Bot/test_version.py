@@ -21,7 +21,7 @@ def cancleBye(bot,order):
     if order["status"] == 'NEW' and order["side"] == 'BUY':
         creation_time = datetime.fromtimestamp(order["time"] / 1000)
         time_diff = datetime.now() - creation_time
-        if time_diff > timedelta(hours=10):
+        if time_diff > timedelta(hours=2):
             current_price = float(client.get_avg_price(symbol=bot['valute_par'])["price"])
 
             if (float(order['price']) + 2 * bot['step']) < current_price:
