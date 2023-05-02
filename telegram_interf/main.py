@@ -1,6 +1,6 @@
 import time
 from threading import Thread
-
+import get_all
 import telebot
 from telebot import types
 from telebot.types import InlineKeyboardButton
@@ -8,15 +8,19 @@ from telebot.types import InlineKeyboardButton
 import base
 usrs = []
 bot = telebot.TeleBot('5072194047:AAFeQRpZAloSxWP6iX2sOLKZ5suXZ_qRL2I')
-db = base.Base("mongodb://Roooasr:sedsaigUG12IHKJhihsifhaosf@mongodb:27017/")
-#db = base.Base("localhost")
+#db = base.Base("mongodb://Roooasr:sedsaigUG12IHKJhihsifhaosf@mongodb:27017/")
+db = base.Base("localhost")
 
+
+def toFixed(numObj, digits=0):
+    return f"{numObj:.{digits}f}"
 
 @bot.message_handler(commands=['start'])
 def start(message):
     keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
     keyboard.add(types.KeyboardButton(text="Создать бота"))
     keyboard.add(types.KeyboardButton(text="Проверить работу"))
+    keyboard.add(types.KeyboardButton(text="Посмотреть топ пар"))
     if message.chat.id not in usrs:
         usrs.append(message.chat.id)
     print(usrs)
@@ -48,12 +52,24 @@ def text(message):
 
             bot.send_message(message.chat.id,
                              f"{bots['valute_par']}\n"
-                             f"{bots['name']} {bots['min_price']}-{bots['max_price']}\n"
+                             f"{bots['name']} {toFixed(bots['min_price'],8)}-{toFixed(bots['max_price'],8)}\n"
                              f"На балансе осталось: {bots['total_sum_invest']}\n"
                              f"Заработано ботом: {bots['earned']}\n"
                              f"Сумма инвестиций: {bots['sum_invest']}\n"
                              f"Колтичество ордеров: {len(bots['orders'])}\n"
                              f"Всего циклов: {bots['cikle_count']}\n",reply_markup=kbrd
+                             )
+    elif message.text == "Посмотреть топ пар":
+        parss = get_all.getValute()['BTC']
+
+        for pars in parss:
+            bot.send_message(message.chat.id,
+                             f"{pars['symbol']}\n"
+                             f"Цена: {toFixed(float(pars['askPrice']), 8)}-{toFixed(float(pars['bidPrice']), 8)}\n"
+                             f"Общий объем: {pars['quoteVolume']}\n"
+                             f"Доходность: {pars['percent']}\n"
+                             f"Кол-во циклов 24ч: ~{toFixed(float(pars['cikle']), 2)}\n"
+                             f"https://www.binance.com/ru/trade/{pars['symbol']}"
                              )
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -79,11 +95,12 @@ def callback_worker(call):
         kbrd.add(InlineKeyboardButton(text="Удалить", callback_data=f"dlt_{str(bots['_id'])}"))
         kbrd.add(InlineKeyboardButton(text="Обновить инф.", callback_data=f"upd_{str(bots['_id'])}"))
         txt = f"{bots['valute_par']}\n"\
-                         f"{bots['name']}\n"\
-                         f"На балансе осталось: {bots['total_sum_invest']}\n"\
-                         f"Сумма инвестиций: {bots['sum_invest']}\n"\
-                         f"Колтичество ордеров: {len(bots['orders'])}\n"\
-                         f"Всего циклов: {bots['cikle_count']}\n"
+                             f"{bots['name']} {toFixed(bots['min_price'],8)}-{toFixed(bots['max_price'],8)}\n"\
+                             f"На балансе осталось: {bots['total_sum_invest']}\n"\
+                             f"Заработано ботом: {bots['earned']}\n"\
+                             f"Сумма инвестиций: {bots['sum_invest']}\n"\
+                             f"Колтичество ордеров: {len(bots['orders'])}\n"\
+                             f"Всего циклов: {bots['cikle_count']}\n"
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=txt, reply_markup=kbrd)
     if msg[0] == 'on':
@@ -103,12 +120,13 @@ def callback_worker(call):
 
         kbrd.add(InlineKeyboardButton(text="Удалить", callback_data=f"dlt_{str(bots['_id'])}"))
         kbrd.add(InlineKeyboardButton(text="Обновить инф.", callback_data=f"upd_{str(bots['_id'])}"))
-        txt = f"{bots['valute_par']}\n" \
-              f"{bots['name']}\n" \
-              f"На балансе осталось: {bots['total_sum_invest']}\n" \
-              f"Сумма инвестиций: {bots['sum_invest']}\n" \
-              f"Колтичество ордеров: {len(bots['orders'])}\n" \
-              f"Всего циклов: {bots['cikle_count']}\n"
+        txt = f"{bots['valute_par']}\n"\
+                             f"{bots['name']} {toFixed(bots['min_price'],8)}-{toFixed(bots['max_price'],8)}\n"\
+                             f"На балансе осталось: {bots['total_sum_invest']}\n"\
+                             f"Заработано ботом: {bots['earned']}\n"\
+                             f"Сумма инвестиций: {bots['sum_invest']}\n"\
+                             f"Колтичество ордеров: {len(bots['orders'])}\n"\
+                             f"Всего циклов: {bots['cikle_count']}\n"
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=txt,
                               reply_markup=kbrd)
@@ -129,12 +147,13 @@ def callback_worker(call):
 
         kbrd.add(InlineKeyboardButton(text="Удалить", callback_data=f"dlt_{str(bots['_id'])}"))
         kbrd.add(InlineKeyboardButton(text="Обновить инф.", callback_data=f"upd_{str(bots['_id'])}"))
-        txt = f"{bots['valute_par']}\n" \
-              f"{bots['name']}\n" \
-              f"На балансе осталось: {bots['total_sum_invest']}\n" \
-              f"Сумма инвестиций: {bots['sum_invest']}\n" \
-              f"Колтичество ордеров: {len(bots['orders'])}\n" \
-              f"Всего циклов: {bots['cikle_count']}\n"
+        txt = f"{bots['valute_par']}\n"\
+                             f"{bots['name']} {toFixed(bots['min_price'],8)}-{toFixed(bots['max_price'],8)}\n"\
+                             f"На балансе осталось: {bots['total_sum_invest']}\n"\
+                             f"Заработано ботом: {bots['earned']}\n"\
+                             f"Сумма инвестиций: {bots['sum_invest']}\n"\
+                             f"Колтичество ордеров: {len(bots['orders'])}\n"\
+                             f"Всего циклов: {bots['cikle_count']}\n"
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=txt,
                               reply_markup=kbrd)
@@ -155,12 +174,13 @@ def callback_worker(call):
 
         kbrd.add(InlineKeyboardButton(text="Удалить", callback_data=f"dlt_{str(bots['_id'])}"))
         kbrd.add(InlineKeyboardButton(text="Обновить инф.", callback_data=f"upd_{str(bots['_id'])}"))
-        txt = f"{bots['valute_par']}\n" \
-              f"{bots['name']}\n" \
-              f"На балансе осталось: {bots['total_sum_invest']}\n" \
-              f"Сумма инвестиций: {bots['sum_invest']}\n" \
-              f"Колтичество ордеров: {len(bots['orders'])}\n" \
-              f"Всего циклов: {bots['cikle_count']}\n"
+        txt = f"{bots['valute_par']}\n"\
+                             f"{bots['name']} {toFixed(bots['min_price'],8)}-{toFixed(bots['max_price'],8)}\n"\
+                             f"На балансе осталось: {bots['total_sum_invest']}\n"\
+                             f"Заработано ботом: {bots['earned']}\n"\
+                             f"Сумма инвестиций: {bots['sum_invest']}\n"\
+                             f"Колтичество ордеров: {len(bots['orders'])}\n"\
+                             f"Всего циклов: {bots['cikle_count']}\n"
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=txt,
                               reply_markup=kbrd)
@@ -184,12 +204,13 @@ def callback_worker(call):
 
         kbrd.add(InlineKeyboardButton(text="Удалить", callback_data=f"dlt_{str(bots['_id'])}"))
         kbrd.add(InlineKeyboardButton(text="Обновить инф.", callback_data=f"upd_{str(bots['_id'])}"))
-        txt = f"{bots['valute_par']}\n" \
-              f"{bots['name']}\n" \
-              f"На балансе осталось: {bots['total_sum_invest']}\n" \
-              f"Сумма инвестиций: {bots['sum_invest']}\n" \
-              f"Колтичество ордеров: {len(bots['orders'])}\n" \
-              f"Всего циклов: {bots['cikle_count']}\n"
+        txt = f"{bots['valute_par']}\n"\
+                             f"{bots['name']} {toFixed(bots['min_price'],8)}-{toFixed(bots['max_price'],8)}\n"\
+                             f"На балансе осталось: {bots['total_sum_invest']}\n"\
+                             f"Заработано ботом: {bots['earned']}\n"\
+                             f"Сумма инвестиций: {bots['sum_invest']}\n"\
+                             f"Колтичество ордеров: {len(bots['orders'])}\n"\
+                             f"Всего циклов: {bots['cikle_count']}\n"
         try:
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=txt,
                                   reply_markup=kbrd)

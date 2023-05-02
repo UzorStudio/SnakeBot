@@ -8,8 +8,8 @@ from time import sleep
 import bin_func
 
 client = Client("W4oUfz3kd65ORroNiswhGM0ZPq6inh07jPTIdOr57PVxocG3myRnDd9FjevU6vE2", "0B5baGfncJzYTfa9zejj1k1fE9y4SVrHAySrjFNC53mXhq2MHNiVt1pTnsIEJNbh")
-#db = base.Base("localhost")
-db = base.Base("mongodb://Roooasr:sedsaigUG12IHKJhihsifhaosf@mongodb:27017/")
+db = base.Base("localhost")
+#db = base.Base("mongodb://Roooasr:sedsaigUG12IHKJhihsifhaosf@mongodb:27017/")
 logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 db.UpdateSymbolInfo(client=client)
 
@@ -21,7 +21,7 @@ def cancleBye(bot,order):
     if order["status"] == 'NEW' and order["side"] == 'BUY':
         creation_time = datetime.fromtimestamp(order["time"] / 1000)
         time_diff = datetime.now() - creation_time
-        if time_diff > timedelta(hours=2):
+        if time_diff > timedelta(hours=10):
             current_price = float(client.get_avg_price(symbol=bot['valute_par'])["price"])
 
             if (float(order['price']) + 2 * bot['step']) < current_price:
@@ -54,11 +54,19 @@ def cancleSell(bot, order):
     if order["status"] == 'NEW' and order["side"] == 'SELL':
         creation_time = datetime.fromtimestamp(order["time"] / 1000)
         time_diff = datetime.now() - creation_time
-        if time_diff > timedelta(hours=2):
+        if time_diff > timedelta(hours=10):
             currentprice = client.get_avg_price(symbol=bot['valute_par'])["price"]
             current_price = float(currentprice)
 
             if (float(order['price']) + 2 * bot['step']) > current_price and bot["bye_order"] != True:
+
+                balance = client.get_asset_balance(db.GetSymbolInfo("DOGEBTC")['quoteAsset'])
+
+                if float(balance['free']) - bot['sum_invest'] >= 0 or float(balance['free']) - bot['full_orders'][currentprice] >=0:
+                    return 0
+
+
+
                 client.cancel_order(symbol=bot['valute_par'], orderId=str(order["orderId"]))
                 logging.info(
                     f"Order {order['orderId']} SELL canceled for bot {bot['name']}c drop below acceptable range")
@@ -193,7 +201,7 @@ def worker():
                                 if price in str(bot['full_orders']):
                                     order_bye = bin_func.Bye(
                                         client=client,
-                                        quantity=bot['full_orders'][float(price)],
+                                        quantity=bot['full_orders'][price],
                                         symbol=bot['valute_par'],
                                         price=price
                                     )

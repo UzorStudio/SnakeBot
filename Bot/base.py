@@ -25,7 +25,7 @@ class Base:
             "total_sum_invest": float(total_sum_invest),
             'orders':[],
             "step":step/100000000,
-            "full_orders":[], # [{"bye":0.0..30,"sell":0.0..31},{"bye":0.0..30,"sell":False}]
+            "full_orders": {}, # [{"bye":0.0..30,"sell":0.0..31},{"bye":0.0..30,"sell":False}]
             "count_hev": 0,  # записывать количество
             'spent':0,
             'spent_true':0,
