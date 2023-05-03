@@ -60,7 +60,7 @@ def cancleSell(bot, order):
 
             if (float(order['price']) + 2 * bot['step']) > current_price and bot["bye_order"] != True:
 
-                balance = client.get_asset_balance(db.GetSymbolInfo("DOGEBTC")['quoteAsset'])
+                balance = client.get_asset_balance(db.GetSymbolInfo(bot['valute_par'])['quoteAsset'])
 
                 if float(balance['free']) - bot['sum_invest'] >= 0 or float(balance['free']) - float(bot['full_orders'][currentprice]) >=0:
                     return 0

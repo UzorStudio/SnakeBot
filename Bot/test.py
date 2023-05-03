@@ -26,7 +26,7 @@ def test(market):
                         (float(o['bidQty']) * float(o['bidPrice'])) + (float(o['askQty']) * float(o['askPrice'])))
             perc = (1-(float(o['bidPrice'])/float(o['askPrice'])))*100
 
-            if cikle >= 10 and perc >= 0.7 and float(o['bidPrice']) <= 0.00000150:
+            if cikle >= 10 and float(o['bidPrice']) <= 0.00000150:
                 if len(o["symbol"].split(market)) > 1:
                     true_order.append({"symbol": o['symbol'],
                                        "askPrice": o['askPrice'],
@@ -55,23 +55,22 @@ def getValute():
     cklE = cikleE
     cklE.sort(key=lambda m: float(m['quoteVolume']), reverse=False)
 
-    return {"BTC":cklB[-10:],"ETH":cklE[-10:]}
+    return {"BTC":cklB,"ETH":cklE}
 
 
 #Сортировка по объему размещенных ордеров наверх 100%
 
-v = getValute()['BTC']
-for i in v:
-    print(i)
+#v = getValute()['BTC']
+#for i in v:
+#    print(i)
 
-#strtInv = 100
-#strt = strtInv
-#
-#for i in range(10):
-#    print(strtInv)
-#    strtInv = strtInv +(strtInv*0.089)
-#
-#print(strtInv,(1-(strt/strtInv))*100)
+strtInv = 10
+strt = strtInv
+
+for i in range(20):
+    strtInv = strtInv +(strtInv*0.01)
+
+print(strtInv,(1-(strt/strtInv))*100)
 
 #db = base.Base("localhost")
 
