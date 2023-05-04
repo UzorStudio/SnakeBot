@@ -194,7 +194,11 @@ class Base:
         last_price = str(
             Orders.find_one({"bot_id": ObjectId(bot_id), "bye_id": order_bye["orderId"]})['bye']["price"])
         last_prices = Bots.find_one({"_id": ObjectId(bot_id)})['last_price']
-        last_prices.remove(last_price)
+        try:
+            last_prices.remove(last_price)
+        except:
+            pass
+
         Bots.update_one({"_id": ObjectId(bot_id)}, {"$set": {"last_price": last_prices}})
 
 
