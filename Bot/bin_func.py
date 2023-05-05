@@ -65,5 +65,4 @@ def Bye(client,symbol,quantity,price):
         )
         return order
     except BinanceAPIException as e:
-        logging.error(f"by bin_funk err: {symbol} {quantity} {e.args}")
         return 0

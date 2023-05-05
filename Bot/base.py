@@ -124,6 +124,15 @@ class Base:
             {"bot_id": ObjectId(bot_id), "bye_id": order_bye_new['orderId'], "bye": order_bye_new, "sell": False, "sell_id": False,
              "profit": 0, "erned": 0, "is_bye": False, "finish": False})
 
+
+    def dropOrder(self,bot_id,order_bye):
+        db = self.classter["SnakeBot"]
+        Bots = db["Bots"]
+
+        orders = Bots.find_one({"_id": ObjectId(bot_id)})['orders']
+        orders.remove(order_bye["orderId"])
+        Bots.update_one({"_id": ObjectId(bot_id)}, {"$set": {'orders': orders}})
+
     def findOrder(self,bot_id):
         db = self.classter["SnakeBot"]
         Orders = db["Orders"]
@@ -182,7 +191,10 @@ class Base:
         Orders = db["Orders"]
         last_price = str(Orders.find_one({"bot_id": ObjectId(bot_id),"sell_id":order_sell["orderId"]})['bye']["price"])
         last_prices = Bots.find_one({"_id": ObjectId(bot_id)})['last_price']
-        last_prices.remove(last_price)
+        try:
+            last_prices.remove(last_price)
+        except:
+            pass
 
         Bots.update_one({"_id": ObjectId(bot_id)},{"$set":{"last_price":last_prices}})
 

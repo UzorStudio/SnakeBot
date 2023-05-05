@@ -111,6 +111,7 @@ def CheckOrder(bot_id):
             print(order)
             db.dropLastPriceBye(bot["_id"], order)
             db.reloadSumInvest(bot["_id"], order)
+            db.dropOrder(bot["_id"],order)
             continue
 
         if order["status"] == 'FILLED' and order["side"] == 'BUY':
