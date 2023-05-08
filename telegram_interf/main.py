@@ -237,7 +237,7 @@ def callback_worker(call):
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=txt,
                               reply_markup=kbrd)
-    if msg[0] == 'on50r':
+    if msg[0] == 'off50r':
         db.offoronReivest(msg[1], True)
         bots = db.getBot(msg[1])
 
