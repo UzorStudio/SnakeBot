@@ -43,11 +43,16 @@ def text(message):
 
             if bots["reinvest"] == True:
                 kbrd.add(InlineKeyboardButton(text="Выключить Реинвест", callback_data=f"offr_{str(bots['_id'])}"))
-            else:
+                kbrd.add(InlineKeyboardButton(text="Включить 50 Реинвест", callback_data=f"on50r_{str(bots['_id'])}"))
+            elif bots["reinvest"] == False:
                 kbrd.add(InlineKeyboardButton(text="Включить Реинвест", callback_data=f"onr_{str(bots['_id'])}"))
+                kbrd.add(InlineKeyboardButton(text="Включить 50 Реинвест", callback_data=f"on50r_{str(bots['_id'])}"))
+            elif bots["reinvest"] == 3:
+                kbrd.add(InlineKeyboardButton(text="Выключить 50 Реинвест", callback_data=f"off50r_{str(bots['_id'])}"))
 
             kbrd.add(InlineKeyboardButton(text="Удалить", callback_data=f"dlt_{str(bots['_id'])}"))
             kbrd.add(InlineKeyboardButton(text="Обновить инф.", callback_data=f"upd_{str(bots['_id'])}"))
+
 
 
             bot.send_message(message.chat.id,
@@ -78,6 +83,7 @@ def callback_worker(call):
     msg = call.data.split("_")
 
     if msg[0] == 'off':
+
         db.offoronBot(msg[1],False)
         bots = db.getBot(msg[1])
 
@@ -89,8 +95,12 @@ def callback_worker(call):
 
         if bots["reinvest"] == True:
             kbrd.add(InlineKeyboardButton(text="Выключить Реинвест", callback_data=f"offr_{str(bots['_id'])}"))
-        else:
+            kbrd.add(InlineKeyboardButton(text="Включить 50 Реинвест", callback_data=f"on50r_{str(bots['_id'])}"))
+        elif bots["reinvest"] == False:
             kbrd.add(InlineKeyboardButton(text="Включить Реинвест", callback_data=f"onr_{str(bots['_id'])}"))
+            kbrd.add(InlineKeyboardButton(text="Включить 50 Реинвест", callback_data=f"on50r_{str(bots['_id'])}"))
+        elif bots["reinvest"] == 3:
+            kbrd.add(InlineKeyboardButton(text="Выключить 50 Реинвест", callback_data=f"off50r_{str(bots['_id'])}"))
 
         kbrd.add(InlineKeyboardButton(text="Удалить", callback_data=f"dlt_{str(bots['_id'])}"))
         kbrd.add(InlineKeyboardButton(text="Обновить инф.", callback_data=f"upd_{str(bots['_id'])}"))
@@ -115,8 +125,12 @@ def callback_worker(call):
 
         if bots["reinvest"] == True:
             kbrd.add(InlineKeyboardButton(text="Выключить Реинвест", callback_data=f"offr_{str(bots['_id'])}"))
-        else:
+            kbrd.add(InlineKeyboardButton(text="Включить 50 Реинвест", callback_data=f"on50r_{str(bots['_id'])}"))
+        elif bots["reinvest"] == False:
             kbrd.add(InlineKeyboardButton(text="Включить Реинвест", callback_data=f"onr_{str(bots['_id'])}"))
+            kbrd.add(InlineKeyboardButton(text="Включить 50 Реинвест", callback_data=f"on50r_{str(bots['_id'])}"))
+        elif bots["reinvest"] == 3:
+            kbrd.add(InlineKeyboardButton(text="Выключить 50 Реинвест", callback_data=f"off50r_{str(bots['_id'])}"))
 
         kbrd.add(InlineKeyboardButton(text="Удалить", callback_data=f"dlt_{str(bots['_id'])}"))
         kbrd.add(InlineKeyboardButton(text="Обновить инф.", callback_data=f"upd_{str(bots['_id'])}"))
@@ -142,8 +156,12 @@ def callback_worker(call):
 
         if bots["reinvest"] == True:
             kbrd.add(InlineKeyboardButton(text="Выключить Реинвест", callback_data=f"offr_{str(bots['_id'])}"))
-        else:
+            kbrd.add(InlineKeyboardButton(text="Включить 50 Реинвест", callback_data=f"on50r_{str(bots['_id'])}"))
+        elif bots["reinvest"] == False:
             kbrd.add(InlineKeyboardButton(text="Включить Реинвест", callback_data=f"onr_{str(bots['_id'])}"))
+            kbrd.add(InlineKeyboardButton(text="Включить 50 Реинвест", callback_data=f"on50r_{str(bots['_id'])}"))
+        elif bots["reinvest"] == 3:
+            kbrd.add(InlineKeyboardButton(text="Выключить 50 Реинвест", callback_data=f"off50r_{str(bots['_id'])}"))
 
         kbrd.add(InlineKeyboardButton(text="Удалить", callback_data=f"dlt_{str(bots['_id'])}"))
         kbrd.add(InlineKeyboardButton(text="Обновить инф.", callback_data=f"upd_{str(bots['_id'])}"))
@@ -169,8 +187,12 @@ def callback_worker(call):
 
         if bots["reinvest"] == True:
             kbrd.add(InlineKeyboardButton(text="Выключить Реинвест", callback_data=f"offr_{str(bots['_id'])}"))
-        else:
+            kbrd.add(InlineKeyboardButton(text="Включить 50 Реинвест", callback_data=f"on50r_{str(bots['_id'])}"))
+        elif bots["reinvest"] == False:
             kbrd.add(InlineKeyboardButton(text="Включить Реинвест", callback_data=f"onr_{str(bots['_id'])}"))
+            kbrd.add(InlineKeyboardButton(text="Включить 50 Реинвест", callback_data=f"on50r_{str(bots['_id'])}"))
+        elif bots["reinvest"] == 3:
+            kbrd.add(InlineKeyboardButton(text="Выключить 50 Реинвест", callback_data=f"off50r_{str(bots['_id'])}"))
 
         kbrd.add(InlineKeyboardButton(text="Удалить", callback_data=f"dlt_{str(bots['_id'])}"))
         kbrd.add(InlineKeyboardButton(text="Обновить инф.", callback_data=f"upd_{str(bots['_id'])}"))
@@ -181,6 +203,68 @@ def callback_worker(call):
                              f"Сумма инвестиций: {bots['sum_invest']}\n"\
                              f"Колтичество ордеров: {len(bots['orders'])}\n"\
                              f"Всего циклов: {bots['cikle_count']}\n"
+
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=txt,
+                              reply_markup=kbrd)
+    if msg[0] == 'on50r':
+        db.offoronReivest(msg[1], 3)
+        bots = db.getBot(msg[1])
+
+        kbrd = types.InlineKeyboardMarkup(row_width=1)
+        if bots["on"] == True:
+            kbrd.add(InlineKeyboardButton(text="Выключить", callback_data=f"off_{str(bots['_id'])}"))
+        else:
+            kbrd.add(InlineKeyboardButton(text="Включить", callback_data=f"on_{str(bots['_id'])}"))
+
+        if bots["reinvest"] == True:
+            kbrd.add(InlineKeyboardButton(text="Выключить Реинвест", callback_data=f"offr_{str(bots['_id'])}"))
+            kbrd.add(InlineKeyboardButton(text="Включить 50 Реинвест", callback_data=f"on50r_{str(bots['_id'])}"))
+        elif bots["reinvest"] == False:
+            kbrd.add(InlineKeyboardButton(text="Включить Реинвест", callback_data=f"onr_{str(bots['_id'])}"))
+            kbrd.add(InlineKeyboardButton(text="Включить 50 Реинвест", callback_data=f"on50r_{str(bots['_id'])}"))
+        elif bots["reinvest"] == 3:
+            kbrd.add(InlineKeyboardButton(text="Выключить 50 Реинвест", callback_data=f"off50r_{str(bots['_id'])}"))
+
+        kbrd.add(InlineKeyboardButton(text="Удалить", callback_data=f"dlt_{str(bots['_id'])}"))
+        kbrd.add(InlineKeyboardButton(text="Обновить инф.", callback_data=f"upd_{str(bots['_id'])}"))
+        txt = f"{bots['valute_par']}\n" \
+              f"{bots['name']} {toFixed(bots['min_price'], 8)}-{toFixed(bots['max_price'], 8)}\n" \
+              f"На балансе осталось: {bots['total_sum_invest']}\n" \
+              f"Заработано ботом: {bots['earned']}\n" \
+              f"Сумма инвестиций: {bots['sum_invest']}\n" \
+              f"Колтичество ордеров: {len(bots['orders'])}\n" \
+              f"Всего циклов: {bots['cikle_count']}\n"
+
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=txt,
+                              reply_markup=kbrd)
+    if msg[0] == 'on50r':
+        db.offoronReivest(msg[1], True)
+        bots = db.getBot(msg[1])
+
+        kbrd = types.InlineKeyboardMarkup(row_width=1)
+        if bots["on"] == True:
+            kbrd.add(InlineKeyboardButton(text="Выключить", callback_data=f"off_{str(bots['_id'])}"))
+        else:
+            kbrd.add(InlineKeyboardButton(text="Включить", callback_data=f"on_{str(bots['_id'])}"))
+
+        if bots["reinvest"] == True:
+            kbrd.add(InlineKeyboardButton(text="Выключить Реинвест", callback_data=f"offr_{str(bots['_id'])}"))
+            kbrd.add(InlineKeyboardButton(text="Включить 50 Реинвест", callback_data=f"on50r_{str(bots['_id'])}"))
+        elif bots["reinvest"] == False:
+            kbrd.add(InlineKeyboardButton(text="Включить Реинвест", callback_data=f"onr_{str(bots['_id'])}"))
+            kbrd.add(InlineKeyboardButton(text="Включить 50 Реинвест", callback_data=f"on50r_{str(bots['_id'])}"))
+        elif bots["reinvest"] == 3:
+            kbrd.add(InlineKeyboardButton(text="Выключить 50 Реинвест", callback_data=f"off50r_{str(bots['_id'])}"))
+
+        kbrd.add(InlineKeyboardButton(text="Удалить", callback_data=f"dlt_{str(bots['_id'])}"))
+        kbrd.add(InlineKeyboardButton(text="Обновить инф.", callback_data=f"upd_{str(bots['_id'])}"))
+        txt = f"{bots['valute_par']}\n" \
+              f"{bots['name']} {toFixed(bots['min_price'], 8)}-{toFixed(bots['max_price'], 8)}\n" \
+              f"На балансе осталось: {bots['total_sum_invest']}\n" \
+              f"Заработано ботом: {bots['earned']}\n" \
+              f"Сумма инвестиций: {bots['sum_invest']}\n" \
+              f"Колтичество ордеров: {len(bots['orders'])}\n" \
+              f"Всего циклов: {bots['cikle_count']}\n"
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=txt,
                               reply_markup=kbrd)
@@ -199,8 +283,12 @@ def callback_worker(call):
 
         if bots["reinvest"] == True:
             kbrd.add(InlineKeyboardButton(text="Выключить Реинвест", callback_data=f"offr_{str(bots['_id'])}"))
-        else:
+            kbrd.add(InlineKeyboardButton(text="Включить 50 Реинвест", callback_data=f"on50r_{str(bots['_id'])}"))
+        elif bots["reinvest"] == False:
             kbrd.add(InlineKeyboardButton(text="Включить Реинвест", callback_data=f"onr_{str(bots['_id'])}"))
+            kbrd.add(InlineKeyboardButton(text="Включить 50 Реинвест", callback_data=f"on50r_{str(bots['_id'])}"))
+        elif bots["reinvest"] == 3:
+            kbrd.add(InlineKeyboardButton(text="Выключить 50 Реинвест", callback_data=f"off50r_{str(bots['_id'])}"))
 
         kbrd.add(InlineKeyboardButton(text="Удалить", callback_data=f"dlt_{str(bots['_id'])}"))
         kbrd.add(InlineKeyboardButton(text="Обновить инф.", callback_data=f"upd_{str(bots['_id'])}"))

@@ -174,6 +174,16 @@ class Base:
         Send.insert_one({"bot":bt['name'],"valute_par":bt['valute_par'],"profit":profit*100,"erned":erned,"bye":order['bye']["cummulativeQuoteQty"],"price_bye":order['bye']["price"],"sell":order_sell["cummulativeQuoteQty"],"price_sell":order_sell["price"],"send":False})
 
 
+    def reinv50Math(self,order_sell):
+        db = self.classter["SnakeBot"]
+        Bots = db["Bots"]
+        Orders = db["Orders"]
+
+        order_bye = float(Orders.find_one({"sell_id":order_sell['orderId']})['bye']['cummulativeQuoteQty'])
+        profit = float(order_sell['cummulativeQuoteQty']) - order_bye
+        inv_sum = float(order_sell['cummulativeQuoteQty']) - (profit-(profit*0.5))
+
+        return {"inv_sum":inv_sum,"profit":profit}
 
     def setLastPrice(self,bot_id,price):
         db = self.classter["SnakeBot"]

@@ -158,8 +158,8 @@ def CheckOrder(bot_id):
                             continue
                         continue
                     except Exception as e:
-                        print(f"Error Bye post SELL: {e.args} {bot['name']} {order}")
-                        logging.info(f"Error Bye post SELL: {e.args} {bot['name']} {order}")
+                        print(f"Error reinvest Bye post SELL: {e.args} {bot['name']} {order}")
+                        logging.info(f"Error reinvest Bye post SELL: {e.args} {bot['name']} {order}")
                 elif bot['reinvest'] == False:
                     try:
                         print(f"order on reinvest: {order}")
@@ -178,8 +178,31 @@ def CheckOrder(bot_id):
                             continue
                         continue
                     except Exception as e:
-                        print(f"Error Bye post SELL: {e.args} {bot['name']} {order}")
-                        logging.info(f"Error Bye post SELL: {e.args} {bot['name']} {order}")
+                        print(f"Error non reinvest Bye post SELL: {e.args} {bot['name']} {order}")
+                        logging.info(f"Error non reinvest Bye post SELL: {e.args} {bot['name']} {order}")
+                elif bot['reinvest'] == 3:
+                    try:
+                        print(f"order on 50 reinvest: {order}")
+                        inv = db.reinv50Math(order)
+
+                        order = bin_func.Bye(
+                            client=client,
+                            quantity=inv["inv_sum"],
+                            symbol=bot['valute_par'],
+                            price=price
+                        )
+
+                        if order != 0:
+                            transaction = client.transfer_spot_to_margin(asset='BTC', amount=inv['profit'])
+                            db.addOrderBye(bot["_id"], order)
+                            logging.info(f"New Bye for bot {bot['name']} with details: {order}")
+                            db.setLastPrice(bot["_id"], price)
+                        else:
+                            continue
+                        continue
+                    except Exception as e:
+                        print(f"Error 50 reinvest Bye post SELL: {e.args} {bot['name']} {order}")
+                        logging.info(f"Error 50 Bye post SELL: {e.args} {bot['name']} {order}")
 
 
         #Системная отмена ордера на покупку
