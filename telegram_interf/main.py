@@ -322,7 +322,7 @@ def SicleSend():
                                  f"{send['valute_par']}\n"
                                  f"{send['bot']}\n"
                                  f"Profit: {send['profit']}%\n"
-                                 f"Erned: {send['erned']}\n"
+                                 f"Erned: {toFixed(send['erned'],8)}\n"
                                  f"Было куплено: {send['bye']}\n"
                                  f"По цене: {send['price_bye']}\n"
                                  f"Было продано: {send['sell']}\n"
