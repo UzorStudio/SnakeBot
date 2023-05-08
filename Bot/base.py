@@ -183,7 +183,7 @@ class Base:
         profit = float(order_sell['cummulativeQuoteQty']) - order_bye
         inv_sum = float(order_sell['cummulativeQuoteQty']) - (profit-(profit*0.5))
 
-        return {"inv_sum":inv_sum,"profit":profit}
+        return {"inv_sum":toFixed(inv_sum,8),"profit":toFixed(profit,8)}
 
     def setLastPrice(self,bot_id,price):
         db = self.classter["SnakeBot"]
