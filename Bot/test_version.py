@@ -316,7 +316,7 @@ def worker():
                     sleep(10)
         except Exception as e:
             print(f"worker err: {e}")
-            logging.exception(f"Error occurred: {e}")
+            logging.exception(f"Error occurred: {e} {bot}")
             sleep(10)
 
 
