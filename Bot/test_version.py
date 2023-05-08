@@ -193,7 +193,7 @@ def CheckOrder(bot_id):
                         )
 
                         if order != 0:
-                            transaction = client.transfer_spot_to_margin(asset='BTC', amount=inv['profit'])
+                            client.transfer_spot_to_margin(asset='BTC', amount=inv['profit'])
                             db.addOrderBye(bot["_id"], order)
                             logging.info(f"New Bye for bot {bot['name']} with details: {order}")
                             db.setLastPrice(bot["_id"], price)
