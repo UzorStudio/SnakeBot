@@ -180,8 +180,8 @@ class Base:
         Orders = db["Orders"]
 
         order_bye = float(Orders.find_one({"sell_id":order_sell['orderId']})['bye']['cummulativeQuoteQty'])
-        profit = float(order_sell['cummulativeQuoteQty']) - order_bye
-        inv_sum = float(order_sell['cummulativeQuoteQty']) - (profit-(profit*0.5))
+        profit = (float(order_sell['cummulativeQuoteQty']) - order_bye)*0.5
+        inv_sum = float(order_sell['cummulativeQuoteQty']) - profit
 
         return {"inv_sum":toFixed(inv_sum,8),"profit":toFixed(profit,8)}
 
