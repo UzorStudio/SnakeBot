@@ -272,6 +272,33 @@ def worker():
                                         symbol=bot['valute_par'],
                                         price=price
                                     )
+
+                            elif bot['reinvest'] == 3:
+                                if price in str(bot['full_orders']):
+                                    order_bye = bin_func.Bye(
+                                        client=client,
+                                        quantity=bot['full_orders'][price],
+                                        symbol=bot['valute_par'],
+                                        price=price
+                                    )
+                                else:
+                                    if (bot["total_sum_invest"] - bot["sum_invest"]) < 0:
+                                        try:
+                                            order_bye = bin_func.Bye(
+                                                client=client,
+                                                quantity=bot['total_sum_invest'],
+                                                symbol=bot['valute_par'],
+                                                price=price
+                                            )
+                                        except:
+                                            order_bye = 0
+                                    else:
+                                        order_bye = bin_func.Bye(
+                                            client=client,
+                                            quantity=bot['sum_invest'],
+                                            symbol=bot['valute_par'],
+                                            price=price
+                                        )
                             else:
                                 order_bye = 0
                             #print(order)
