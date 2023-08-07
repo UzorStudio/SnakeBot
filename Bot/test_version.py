@@ -8,7 +8,7 @@ from time import sleep
 import bin_func
 
 #client = Client("W4oUfz3kd65ORroNiswhGM0ZPq6inh07jPTIdOr57PVxocG3myRnDd9FjevU6vE2", "0B5baGfncJzYTfa9zejj1k1fE9y4SVrHAySrjFNC53mXhq2MHNiVt1pTnsIEJNbh")
-client = Client("bnBCUuzPbK05f1NDO8jSo4uCfuT5ilTS7tBGDbWn2tZqEAZ2V4PGhDyVXKAAt3XR", "OHbvK9QG4FOEDaKDn0ZddMxE1vTbyKdAJFgJeu85Y6qsWFz7nPAjv7sIrgd7bQF5")
+client = Client("ovaDkCgIRhRrZKmi3Ylrv7YzQojGWGbDDZJ8UmgkgDC2A68tv0KNDa1m1nWubSwA", "MrGVvzbgdkXO4hsVwb0yXj2w1fbmSZzUBOpyx06eq5UMdAF0yUhv3Ov8UKD7BVBR")
 #db = base.Base("localhost")
 db = base.Base("mongodb://Roooasr:sedsaigUG12IHKJhihsifhaosf@mongodb:27017/")
 logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
