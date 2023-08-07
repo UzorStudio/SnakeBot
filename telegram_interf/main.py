@@ -61,7 +61,7 @@ def text(message):
                              f"На балансе осталось: {bots['total_sum_invest']}\n"
                              f"Заработано ботом: {bots['earned']}\n"
                              f"Сумма инвестиций: {bots['sum_invest']}\n"
-                             f"Колтичество ордеров: {len(bots['orders'])}\n"
+                             f"Количество ордеров: {len(bots['orders'])}\n"
                              f"Всего циклов: {bots['cikle_count']}\n",reply_markup=kbrd
                              )
     elif message.text == "Посмотреть топ пар":
@@ -109,7 +109,7 @@ def callback_worker(call):
                              f"На балансе осталось: {bots['total_sum_invest']}\n"\
                              f"Заработано ботом: {bots['earned']}\n"\
                              f"Сумма инвестиций: {bots['sum_invest']}\n"\
-                             f"Колтичество ордеров: {len(bots['orders'])}\n"\
+                             f"Количество ордеров: {len(bots['orders'])}\n"\
                              f"Всего циклов: {bots['cikle_count']}\n"
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=txt, reply_markup=kbrd)
@@ -139,7 +139,7 @@ def callback_worker(call):
                              f"На балансе осталось: {bots['total_sum_invest']}\n"\
                              f"Заработано ботом: {bots['earned']}\n"\
                              f"Сумма инвестиций: {bots['sum_invest']}\n"\
-                             f"Колтичество ордеров: {len(bots['orders'])}\n"\
+                             f"Количество ордеров: {len(bots['orders'])}\n"\
                              f"Всего циклов: {bots['cikle_count']}\n"
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=txt,
@@ -170,7 +170,7 @@ def callback_worker(call):
                              f"На балансе осталось: {bots['total_sum_invest']}\n"\
                              f"Заработано ботом: {bots['earned']}\n"\
                              f"Сумма инвестиций: {bots['sum_invest']}\n"\
-                             f"Колтичество ордеров: {len(bots['orders'])}\n"\
+                             f"Количество ордеров: {len(bots['orders'])}\n"\
                              f"Всего циклов: {bots['cikle_count']}\n"
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=txt,
@@ -201,7 +201,7 @@ def callback_worker(call):
                              f"На балансе осталось: {bots['total_sum_invest']}\n"\
                              f"Заработано ботом: {bots['earned']}\n"\
                              f"Сумма инвестиций: {bots['sum_invest']}\n"\
-                             f"Колтичество ордеров: {len(bots['orders'])}\n"\
+                             f"Количество ордеров: {len(bots['orders'])}\n"\
                              f"Всего циклов: {bots['cikle_count']}\n"
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=txt,
@@ -232,7 +232,7 @@ def callback_worker(call):
               f"На балансе осталось: {bots['total_sum_invest']}\n" \
               f"Заработано ботом: {bots['earned']}\n" \
               f"Сумма инвестиций: {bots['sum_invest']}\n" \
-              f"Колтичество ордеров: {len(bots['orders'])}\n" \
+              f"Количество ордеров: {len(bots['orders'])}\n" \
               f"Всего циклов: {bots['cikle_count']}\n"
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=txt,
@@ -263,7 +263,7 @@ def callback_worker(call):
               f"На балансе осталось: {bots['total_sum_invest']}\n" \
               f"Заработано ботом: {bots['earned']}\n" \
               f"Сумма инвестиций: {bots['sum_invest']}\n" \
-              f"Колтичество ордеров: {len(bots['orders'])}\n" \
+              f"Количество ордеров: {len(bots['orders'])}\n" \
               f"Всего циклов: {bots['cikle_count']}\n"
 
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=txt,
@@ -297,7 +297,7 @@ def callback_worker(call):
                              f"На балансе осталось: {bots['total_sum_invest']}\n"\
                              f"Заработано ботом: {bots['earned']}\n"\
                              f"Сумма инвестиций: {bots['sum_invest']}\n"\
-                             f"Колтичество ордеров: {len(bots['orders'])}\n"\
+                             f"Количество ордеров: {len(bots['orders'])}\n"\
                              f"Всего циклов: {bots['cikle_count']}\n"
         try:
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=txt,
