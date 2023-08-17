@@ -229,7 +229,7 @@ def worker():
                     price = client.get_avg_price(symbol=bot['valute_par'])["price"]
                     if price not in bot['last_price'] and (float(price)-bot['step']) <= bot['max_price'] and float(price) >= bot['min_price']:
 
-                        if float(bot['last_price']) - bot['last_price'] > float(price):
+                        if float(bot['last_price'][-1]) - bot['step'] > float(price):
                             break
 
                         try:
