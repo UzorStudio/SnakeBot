@@ -213,8 +213,8 @@ def CheckOrder(bot_id):
 
 
         #Отмена ордера на продажу
-        bot = db.getBot(bot_id)
-        cancleSell(bot,order)
+        #bot = db.getBot(bot_id)
+        #cancleSell(bot,order)
 
 
 def worker():
@@ -228,6 +228,10 @@ def worker():
                     CheckOrder(bot["_id"])
                     price = client.get_avg_price(symbol=bot['valute_par'])["price"]
                     if price not in bot['last_price'] and (float(price)-bot['step']) <= bot['max_price'] and float(price) >= bot['min_price']:
+
+                        if float(bot['last_price']) - bot['last_price'] > float(price):
+                            break
+
                         try:
                             if bot['reinvest'] == True:
                                 if price in str(bot['full_orders']):
