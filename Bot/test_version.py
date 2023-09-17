@@ -230,7 +230,7 @@ def worker():
                     if price not in bot['last_price'] and (float(price)-bot['step']) <= bot['max_price'] and float(price) >= bot['min_price']:
                         if len(bot['last_price']) > 0 and bot['step'] > 0.00000002:
                             if float(bot['last_price'][-1]) - bot['step'] > float(price):
-                                break
+                                continue
 
                         try:
                             if bot['reinvest'] == True:
